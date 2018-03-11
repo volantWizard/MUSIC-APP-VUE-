@@ -4,7 +4,7 @@
       <slot></slot>
     </div>
     <div class="dots">
-
+      <span class="dot" v-for="(item, index) of dots" :key="index" :class="{active: currentPageIndex === index}"></span>   
     </div>
   </div>
 </template>
@@ -35,27 +35,49 @@
       }
     },
     mounted() {
-      this.$nextTick(function () {
+      this.$nextTick(() => {
         this._setSliderWith()
+        this._initDots()
         this._initSlider()
+
+        if (this.autoPlay) {
+          this._autoPlay()
+        }
       })
+      // setTimeout(() => {
+      //   this._setSliderWith()
+      //   this._initSlider()
+      // }, 20)
     },
     methods: {
       _setSliderWith() {
-        this.children = this.$refs.sliderGroup.children
+        this.childrens = this.$refs.sliderGroup.children
         let width = 0
         let sliderWidth = this.$refs.slider.clientWidth
-        const childrenLen = this.children.length
-        for (let i = 0; i < childrenLen; i++) {
-          let child = this.children[i]
+        const childrensLen = this.childrens.length
+        console.log(sliderWidth, childrensLen)
+        for (let i = 0; i < childrensLen; i++) {
+          let child = this.childrens[i]
           addClass(child, 'slider-item')
-          child.styl.width = sliderWidth + 'px'
+          child.style.width = `${sliderWidth}px`
           width += sliderWidth
-        }
+        }console.log(width)
         if (this.loop) {
           width += 2 * sliderWidth
         }
-        this.$refs.sliderGroup.style.width = width + 'px'
+        this.$refs.sliderGroup.style.width = `${width}px`
+      },
+      _initDots() {
+        this.dots = this.childrens.length
+      },
+      _autoPlay() {
+        let pageIndex = this.currentPageIndex + 1
+        if (this.loop) {
+          pageIndex += 1
+        }
+        this.timer = setTimeout(() => {
+          this.slider.goToPage(pageIndex, 0, 400)
+        }, this.interval)
       },
       _initSlider() {
         this.slider = new BScroll(this.$refs.slider, {
@@ -69,7 +91,11 @@
         })
 
         this.slider.on('scrollEnd', () => {
-
+          let pageIndex = this.slider.getCurrentPage().pageX
+          if (this.loop) {
+            pageIndex -= 1
+          }
+          this.currentPageIndex = pageIndex
         })
       }
     }

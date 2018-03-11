@@ -2,7 +2,8 @@
   <div class="recommend">
     <div class="slider-wrapper">
       <slider>
-        <div v-if="sliderList.length" v-for="item in sliderList">
+        <!-- 之所以用插槽，为了使组件通用！组件内item的每个具体字段，每个接口返回的肯定是不一样的 -->
+        <div class="slider-item" v-if="sliderList.length" v-for="(item, index) in sliderList" :key="index">
           <a :href="item.linkUrl">
             <img :src="item.picUrl">
           </a>
@@ -30,9 +31,8 @@
     },
     methods: {
       _getRecommend() {
-        console.log(1)
         getRecommend().then((res) => {
-          console.log(res)
+          console.log(res.data.slider)
           if (res.code === ERR_OK) {
             this.sliderList = res.data.slider
           }
@@ -56,7 +56,7 @@
     .slider-wrapper
       position: relative
       width: 100%
-      /*overflow: hidden*/
+      // /*overflow: hidden*/
     .recommend-list
       .list-title
         height: 65px
