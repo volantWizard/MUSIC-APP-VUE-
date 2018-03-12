@@ -1,13 +1,13 @@
 <template>
   <div class="recommend">
     <div class="slider-wrapper">
-      <slider>
+      <slider :sliderData="sliderData"  >
         <!-- 之所以用插槽，为了使组件通用！组件内item的每个具体字段，每个接口返回的肯定是不一样的 -->
-        <div class="slider-item" v-if="sliderList.length" v-for="(item, index) in sliderList" :key="index">
+        <!-- <div class="slider-item" v-if="sliderList.length" v-for="(item, index) in sliderList" :key="index">
           <a :href="item.linkUrl">
             <img :src="item.picUrl">
           </a>
-        </div>
+        </div> -->
       </slider>
     </div>
     <div class="recommend-list">
@@ -24,6 +24,18 @@
     data() {
       return {
         sliderList: []
+      }
+    },
+    computed: {
+      sliderData() {
+        console.log(this.sliderList)
+        return this.sliderList.map((item) => {
+          return {
+            ...item,
+            url: item.linkUrl,
+            image: item.picUrl
+          }
+        })
       }
     },
     created() {

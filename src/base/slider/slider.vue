@@ -1,10 +1,14 @@
 <template>
   <div class="slider" ref="slider">
     <div class="slider-group" ref="sliderGroup">
-      <slot></slot>
+      <div class="slider-item" v-if="sliderList.length" v-for="(item, index) in sliderList" :key="index">
+        <a :href="item.linkUrl">
+          <img :src="item.picUrl">
+        </a>
+      </div>
     </div>
     <div class="dots">
-      <span class="dot" v-for="(item, index) of dots" :key="index" :class="{active: currentPageIndex === index}"></span>   
+      <span class="dot" v-if="sliderList.length" v-for="(item, index) in sliderList" :key="index" :class="{active: currentPageIndex === index}"></span>   
     </div>
   </div>
 </template>
@@ -26,31 +30,56 @@
       interval: {
         type: Number,
         default: 4000
+      },
+      sliderData: {
+        type: Array
       }
     },
     data() {
       return {
+        // sliderList: this.sliderData,
         dots: [],
         currentPageIndex: 0
       }
     },
+    computed: {
+      sliderList() {
+        return this.sliderData
+      }
+    },
+    created() {
+      // console.log(this.sliderList)
+    },
     mounted() {
-      this.$nextTick(() => {
+      // this.$nextTick(() => {
+      //   this._setSliderWith()
+      //   this._initDots()
+      //   this._initSlider()
+
+      //   if (this.autoPlay) {
+      //     this._autoPlay()
+      //   }
+      // })
+      setTimeout(() => {
         this._setSliderWith()
-        this._initDots()
+        // this._initDots()
         this._initSlider()
 
         if (this.autoPlay) {
           this._autoPlay()
         }
-      })
-      // setTimeout(() => {
-      //   this._setSliderWith()
-      //   this._initSlider()
-      // }, 20)
+      }, 20)
+
+      window.addEventListener('resize', () => {
+        if (!this.slider) {
+          return
+        }
+        this._setSliderWith(true)
+        this.slider.refresh()
+      }, false)
     },
     methods: {
-      _setSliderWith() {
+      _setSliderWith(isResize) {
         this.childrens = this.$refs.sliderGroup.children
         let width = 0
         let sliderWidth = this.$refs.slider.clientWidth
@@ -62,14 +91,14 @@
           child.style.width = `${sliderWidth}px`
           width += sliderWidth
         }console.log(width)
-        if (this.loop) {
+        if (this.loop && !isResize) {
           width += 2 * sliderWidth
         }
         this.$refs.sliderGroup.style.width = `${width}px`
       },
-      _initDots() {
-        this.dots = this.childrens.length
-      },
+      // _initDots() {
+      //   this.dots = this.childrens.length
+      // },
       _autoPlay() {
         let pageIndex = this.currentPageIndex + 1
         if (this.loop) {
@@ -96,6 +125,9 @@
             pageIndex -= 1
           }
           this.currentPageIndex = pageIndex
+
+          clearTimeout(this.timer)
+          this._autoPlay()
         })
       }
     }
@@ -133,12 +165,12 @@
       .dot
         display: inline-block
         margin: 0 4px
-        width: 8px
-        height: 8px
-        border-radius: 50%
+        width: 20px
+        height: 20px
+        border-radius: 10px
         background: $color-text-l
         &.active
-          width: 20px
+          width: 40px
           border-radius: 5px
           background: $color-text-l1
 </style>
