@@ -78,6 +78,9 @@
         this.slider.refresh()
       }, false)
     },
+    destroyed() {
+      clearTimeout(this.timer)
+    },
     methods: {
       _setSliderWith(isResize) {
         this.childrens = this.$refs.sliderGroup.children

@@ -11,6 +11,7 @@ var express = require('express')
 var webpack = require('webpack')
 var proxyMiddleware = require('http-proxy-middleware')
 var webpackConfig = require('./webpack.dev.conf')
+const axios = require('axios')
 
 // default port where dev server listens for incoming traffic
 var port = process.env.PORT || config.dev.port
@@ -39,6 +40,23 @@ compiler.plugin('compilation', function (compilation) {
     cb()
   })
 })
+
+// axios proxy
+const apiRoutes = express.Router()
+apiRoutes.get('/getDiscList', function(req, res) {
+    const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+    axios.get(url, {
+      headers: {
+        referer: 'https://c.y.qq.com/',
+        host: 'c.y.qq.com'
+      },
+      params: req.query
+    }).then((response) => {
+      res.json(response.data)
+    })
+  })
+
+app.use('/api', apiRoutes)
 
 // proxy api requests
 Object.keys(proxyTable).forEach(function (context) {

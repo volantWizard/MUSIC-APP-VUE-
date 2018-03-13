@@ -2,7 +2,7 @@
   <div class="recommend">
     <div class="slider-wrapper">
       <slider :sliderData="sliderData"  >
-        <!-- 之所以用插槽，为了使组件通用！组件内item的每个具体字段，每个接口返回的肯定是不一样的 -->
+        <!-- 之所以用插槽，为了使组件通用！组件内item的每个具体字段，每个接口返回的肯定是不一样的。那我获取数据后改造的复合slider的数据字段需求不就不用插槽了吗，哈哈 -->
         <!-- <div class="slider-item" v-if="sliderList.length" v-for="(item, index) in sliderList" :key="index">
           <a :href="item.linkUrl">
             <img :src="item.picUrl">
@@ -17,13 +17,14 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import {getRecommend} from 'api/recommend'
+  import {getRecommend, getDiscList} from 'api/recommend'
   import {ERR_OK} from 'api/config'
   import Slider from 'base/slider/slider'
   export default {
     data() {
       return {
-        sliderList: []
+        sliderList: [],
+        diskList: []
       }
     },
     computed: {
@@ -40,6 +41,7 @@
     },
     created() {
       this._getRecommend()
+      this._getDiscList()
     },
     methods: {
       _getRecommend() {
@@ -47,6 +49,14 @@
           console.log(res.data.slider)
           if (res.code === ERR_OK) {
             this.sliderList = res.data.slider
+          }
+        })
+      },
+      _getDiscList() {
+        getDiscList().then((res) => {
+          console.log(res.data)
+          if (res.code === ERR_OK) {
+            this.diskList = res.data.slider
           }
         })
       }
