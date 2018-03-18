@@ -3,7 +3,8 @@
     <div class="slider-group" ref="sliderGroup">
       <div class="slider-item" v-if="sliderList.length" v-for="(item, index) in sliderList" :key="index">
         <a :href="item.linkUrl">
-          <img :src="item.picUrl">
+          <!-- needsclick类，解决fastclick和better-scroll的click冲突 -->
+          <img class="needsclick" @load="imgLoaded" :src="item.picUrl">
         </a>
       </div>
     </div>
@@ -36,6 +37,7 @@
       }
     },
     data() {
+      console.log('slider-data-1')
       return {
         // sliderList: this.sliderData,
         dots: [],
@@ -44,13 +46,22 @@
     },
     computed: {
       sliderList() {
+        console.log('slider-prop-computed-data-2')
         return this.sliderData
       }
     },
+    beforeCreate () {
+      console.log('slider-before')
+    },
     created() {
+      console.log('slider-creat')
       // console.log(this.sliderList)
     },
+    beforeMount() {
+      console.log('slider-befor-mount')
+    },
     mounted() {
+      console.log('slider-mounted')
       // this.$nextTick(() => {
       //   this._setSliderWith()
       //   this._initDots()
@@ -132,6 +143,9 @@
           clearTimeout(this.timer)
           this._autoPlay()
         })
+      },
+      imgLoaded() {
+        this.$emit('emitImgLoad')
       }
     }
   }

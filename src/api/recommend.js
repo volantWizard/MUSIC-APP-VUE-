@@ -22,17 +22,18 @@ export function getDiscList() {
     platform: 'yqq',
     hostUin: 0,
     sin: 0,
-    ein: 0,
+    ein: 29,
     sortId: 5,
     needNewCode: 5,
     categoryId: 10000000,
     rnd: Math.random(),
-    format: 'json'
+    format: 'json',
+    g_tk: 5381
   })
 
   return axios.get(url, {
     params: data
   }).then((res) => {
-    return Promise.resolve(res)
+    return Promise.resolve(res.data)
   })
 }
